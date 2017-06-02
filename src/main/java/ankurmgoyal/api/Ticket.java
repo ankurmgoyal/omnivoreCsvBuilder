@@ -1,5 +1,11 @@
 package ankurmgoyal.api;
 
+import java.util.Collection;
+import java.util.List;
+
+import ankurmgoyal.api.Employee;
+import ankurmgoyal.api.TicketItem;
+
 public class Ticket {
 	
 	private boolean isVoid;
@@ -24,6 +30,22 @@ public class Ticket {
 	private int closedAt;
 	private boolean autoSend;
 	
+	private Employee employee;
+	private Collection<TicketItem> ticketItems;
+	
+	
+	public Employee getEmployee() {
+		return employee;
+	}
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+	public Collection<TicketItem> getTicketItems() {
+		return ticketItems;
+	}
+	public void setTicketItems(Collection<TicketItem> ticketItems) {
+		this.ticketItems = ticketItems;
+	}
 	
 	public boolean isVoid() {
 		return isVoid;
