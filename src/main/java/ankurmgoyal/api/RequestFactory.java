@@ -173,6 +173,17 @@ public class RequestFactory {
 		catch(Exception e){
 		}
 		
+		try{
+			toReturn.setEmployee(generateEmployee(ticket.getResourcesByRel("employee").iterator().next()));
+		}
+		catch(Exception e){
+		}
+		
+		try{
+			toReturn.setTicketItems(ticketItemConverter((Collection<ReadableRepresentation>) ticket.getResourcesByRel("items")));
+		}
+		catch(Exception e){
+		}
 		
 		return toReturn;
 	}
