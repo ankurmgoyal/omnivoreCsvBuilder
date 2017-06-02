@@ -6,6 +6,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,7 +42,7 @@ public class Builder {
         catch(Exception e){
         	e.printStackTrace();
         }
-        System.out.println("File complete...");
+        System.out.println("File complete.");
     }
 	
 	public static void setLocationID() throws IOException{
@@ -54,12 +57,12 @@ public class Builder {
     	LocalDate today = LocalDate.now(); 
     	int month = today.getMonthValue();
     	int day = today.getDayOfMonth();
-
+    	
     	File file = new File(loc+"_"+month+"-"+day+".csv");
     	Collection<Ticket> tickets = getTickets();
     	
 		FileWriter fw = new FileWriter(file);
-		fw.write("Location,Item ID,Actual Price, Split, Quantity, Ticket ID, Voided?, Total, Tips, Tax, Sub Total, Service Charges, Paid, Other Charges, Items, Due, Discounts, Ticket Open, Ticket Close, Employee ID, First Name, Last Name, Menu Item ID, Item Name, Original Price, Category 1, Parent Category 1, Category 2, Parent Category 2\n");
+		fw.write("Location,Item ID,Actual Price, Split, Quantity, Ticket ID, Voided?, Total, Tips, Tax, Sub Total, Service Charges, Paid, Other Charges, Items, Due, Discounts, Open Month, Open Day, Open Year, Open Hour, Open Minute, Close Month, Close Day, Close Year, Close Hour, Close Minute, Guest Count, Employee ID, First Name, Last Name, Menu Item ID, Item Name, Original Price, Category 1, Parent Category 1, Category 2, Parent Category 2\n");
 		for(Ticket t: tickets){
 			ticketWriter(t,fw);
 		}
@@ -92,6 +95,8 @@ public class Builder {
 	
 	public static void ticketWriter(Ticket ticket, FileWriter fw) throws IOException{
 		Employee e = ticket.getEmployee();
+		ZoneOffset zone = OffsetDateTime.now().getOffset();
+		
 		for(TicketItem t: ticket.getTicketItems()){
 			fw.write(loc+",");
 			
@@ -114,8 +119,23 @@ public class Builder {
 			fw.write(ticket.getItems()+",");
 			fw.write(ticket.getDue()+",");
 			fw.write(ticket.getDiscounts()+",");
-			fw.write(ticket.getOpenedAt()+",");
-			fw.write(ticket.getClosedAt()+",");
+			LocalDateTime ldt = LocalDateTime.ofEpochSecond(ticket.getOpenedAt(), 0, zone);
+			fw.write(ldt.getMonthValue()+",");
+			fw.write(ldt.getDayOfMonth()+",");
+			fw.write(ldt.getYear()+",");
+			fw.write(ldt.getHour()+",");
+			fw.write(ldt.getMinute()+",");
+			if(ticket.getClosedAt() > 0){
+				ldt = LocalDateTime.ofEpochSecond(ticket.getClosedAt(), 0, zone);
+				fw.write(ldt.getMonthValue()+",");
+				fw.write(ldt.getDayOfMonth()+",");
+				fw.write(ldt.getYear()+",");
+				fw.write(ldt.getHour()+",");
+				fw.write(ldt.getMinute()+",");
+			}
+			else{
+				fw.write(",,,,,");
+			}
 			fw.write(ticket.getGuestCount()+",");
 			
 			//information about employee
